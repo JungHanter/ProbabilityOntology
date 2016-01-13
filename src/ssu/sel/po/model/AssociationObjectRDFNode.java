@@ -121,4 +121,12 @@ public class AssociationObjectRDFNode {
         }
         return null;
     }
+
+    public static Set<RDFNode> getTypeSet(Set<AssociationObjectRDFNode> nodeSet) {
+        Set<RDFNode> typeSet = new HashSet<>();
+        for (AssociationObjectRDFNode node : nodeSet) {
+            typeSet.add(node.rdfType);
+        }
+        return typeSet;
+    }
 }

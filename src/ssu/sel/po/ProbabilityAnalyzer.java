@@ -413,10 +413,10 @@ public class ProbabilityAnalyzer {
                                         Map<Integer, Set<PossibleSet>> possibleSetMap) {
 
         for (RDFNode targetNode : combinationSets.keySet()) {   //each individuals as targets ex)Hypotension
-            // 1. Find association analyzing target Node.
+            // 1. Collecting and Distributing among value sets
             Set<Set<AssociationObjectRDFNode>> associationSets = combinationSets.get(targetNode);
 //            Map<Set<AssociationObjectRDFNode>, Set<AssociationObjectRDFNode>> valueSet = new HashMap<>();     // nonnuericValueSet, numericValueSet
-            Map<Set<AssociationObjectRDFNode>, List<Set<AssociationObjectRDFNode>>> valueSet = new HashMap<>();
+            Map<Set<AssociationObjectRDFNode>, Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>>> valueSet = new HashMap<>();
 
             for (Set<AssociationObjectRDFNode> associationSet : associationSets) {
                 for (Set<PossibleSet> tempPossibleSets : possibleSetMap.values())
@@ -441,17 +441,30 @@ public class ProbabilityAnalyzer {
                                 }
                             }
 
+                            Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>> numericValueSetsMap;
                             if(valueSet.keySet().contains(nonNumericSet)) {
-                                valueSet.get(nonNumericSet).add(numericSet);
+                                numericValueSetsMap = valueSet.get(nonNumericSet);
                             } else {
-                                List<Set<AssociationObjectRDFNode>> numericSetList = new ArrayList<>();
-                                numericSetList.add(numericSet);
-                                valueSet.put(nonNumericSet, numericSetList);
+                                numericValueSetsMap = new HashMap<>();
+                                valueSet.put(nonNumericSet, numericValueSetsMap);
                             }
+
+                            Set<RDFNode> numericTypeSet = AssociationObjectRDFNode.getTypeSet(numericSet);
+                            Set<Set<AssociationObjectRDFNode>> numericValueSets;
+                            if(numericValueSetsMap.keySet().contains(numericTypeSet)) {
+                                numericValueSets = numericValueSetsMap.get(numericTypeSet);
+                            } else {
+                                numericValueSets = new HashSet<>();
+                                numericValueSetsMap.put(numericTypeSet, numericValueSets);
+                            }
+                            numericValueSets.add(numericSet);
                         }
                     }
             }
             System.out.println(valueSet.toString());
+
+            // 2. Analyzing association from value sets
+
         }
     }
 
