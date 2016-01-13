@@ -1,0 +1,825 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY hc "http://soft.ssu.ac.kr/ontology/health_context" >
+    <!ENTITY pront "http://soft.ssu.ac.kr/ontology/probability_ontology#" >
+]>
+
+
+<rdf:RDF xmlns="&hc;#"
+     xml:base="http://soft.ssu.ac.kr/ontology/health_context"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:hc="http://soft.ssu.ac.kr/ontology/health_context"
+     xmlns:pront="http://soft.ssu.ac.kr/ontology/probability_ontology#">
+    <owl:Ontology rdf:about="http://soft.ssu.ac.kr/ontology/health_context">
+        <rdfs:label>Health Context Ontology</rdfs:label>
+        <owl:imports rdf:resource="http://soft.ssu.ac.kr/ontology/probability_ontology"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#dataIs -->
+
+    <owl:ObjectProperty rdf:about="&hc;#dataIs">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:range rdf:resource="&hc;#HealthData"/>
+        <rdfs:domain rdf:resource="&hc;#HealthDataAcquisition"/>
+        <rdfs:subPropertyOf rdf:resource="&pront;isAssociationObject"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#dataOwner -->
+
+    <owl:ObjectProperty rdf:about="&hc;#dataOwner">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="&hc;#HealthDataAcquisition"/>
+        <rdfs:range rdf:resource="&hc;#Person"/>
+        <owl:inverseOf rdf:resource="&hc;#hasHealthDataAcquisition"/>
+        <rdfs:subPropertyOf rdf:resource="&pront;isAssociationSubject"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#hasHealthContextAcquisition -->
+
+    <owl:ObjectProperty rdf:about="&hc;#hasHealthContextAcquisition">
+        <rdfs:range rdf:resource="&hc;#HealthContextAcquisition"/>
+        <rdfs:subPropertyOf rdf:resource="&hc;#hasHealthDataAcquisition"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#hasHealthContextProbability -->
+
+    <owl:ObjectProperty rdf:about="&hc;#hasHealthContextProbability">
+        <rdfs:range rdf:resource="&hc;#HealthContextProbability"/>
+        <rdfs:domain rdf:resource="&hc;#Person"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#hasHealthDataAcquisition -->
+
+    <owl:ObjectProperty rdf:about="&hc;#hasHealthDataAcquisition">
+        <rdfs:range rdf:resource="&hc;#HealthDataAcquisition"/>
+        <rdfs:domain rdf:resource="&hc;#Person"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#nonNumericDataIs -->
+
+    <owl:ObjectProperty rdf:about="&hc;#nonNumericDataIs">
+        <rdfs:subPropertyOf rdf:resource="&hc;#dataIs"/>
+        <rdfs:subPropertyOf rdf:resource="&pront;isNonNumericAssociationObejct"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#numericDataIs -->
+
+    <owl:ObjectProperty rdf:about="&hc;#numericDataIs">
+        <rdfs:subPropertyOf rdf:resource="&hc;#dataIs"/>
+        <rdfs:subPropertyOf rdf:resource="&pront;isNumericAssociationObejct"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#category -->
+
+    <owl:DatatypeProperty rdf:about="&hc;#category">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="&hc;#NonNumericHealthData"/>
+        <rdfs:subPropertyOf rdf:resource="&pront;dataOfAssociationObject"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#value -->
+
+    <owl:DatatypeProperty rdf:about="&hc;#value">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="&hc;#NumericHealthData"/>
+        <rdfs:subPropertyOf rdf:resource="&pront;dataOfAssociationObject"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#Age -->
+
+    <owl:Class rdf:about="&hc;#Age">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthProfile"/>
+        <rdfs:subClassOf rdf:resource="&hc;#NumericHealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#BMI -->
+
+    <owl:Class rdf:about="&hc;#BMI">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthMeasurement"/>
+        <rdfs:subClassOf rdf:resource="&hc;#NumericHealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#BloodPressure -->
+
+    <owl:Class rdf:about="&hc;#BloodPressure">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthContext"/>
+        <rdfs:subClassOf rdf:resource="&hc;#NonNumericHealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#Diastolic -->
+
+    <owl:Class rdf:about="&hc;#Diastolic">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthMeasurement"/>
+        <rdfs:subClassOf rdf:resource="&hc;#NumericHealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#Gender -->
+
+    <owl:Class rdf:about="&hc;#Gender">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthProfile"/>
+        <rdfs:subClassOf rdf:resource="&hc;#NonNumericHealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HealthContext -->
+
+    <owl:Class rdf:about="&hc;#HealthContext">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthData"/>
+        <owl:disjointWith rdf:resource="&hc;#HealthObservationData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HealthContextAcquisition -->
+
+    <owl:Class rdf:about="&hc;#HealthContextAcquisition">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthDataAcquisition"/>
+        <rdfs:subClassOf rdf:resource="&pront;AssociationTargetRelationship"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HealthContextProbability -->
+
+    <owl:Class rdf:about="&hc;#HealthContextProbability">
+        <rdfs:subClassOf rdf:resource="&pront;ProbabilityRelationship"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HealthData -->
+
+    <owl:Class rdf:about="&hc;#HealthData">
+        <rdfs:subClassOf rdf:resource="&pront;AssociationObject"/>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&hc;#NonNumericHealthData"/>
+                    <rdf:Description rdf:about="&hc;#NumericHealthData"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&hc;#HealthContext"/>
+                    <rdf:Description rdf:about="&hc;#HealthObservationData"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HealthDataAcquisition -->
+
+    <owl:Class rdf:about="&hc;#HealthDataAcquisition">
+        <rdfs:subClassOf rdf:resource="&pront;AssociationRelationship"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HealthMeasurement -->
+
+    <owl:Class rdf:about="&hc;#HealthMeasurement">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthObservationData"/>
+        <owl:disjointWith rdf:resource="&hc;#HealthProfile"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HealthObservationData -->
+
+    <owl:Class rdf:about="&hc;#HealthObservationData">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HealthProfile -->
+
+    <owl:Class rdf:about="&hc;#HealthProfile">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthObservationData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#NonNumericHealthData -->
+
+    <owl:Class rdf:about="&hc;#NonNumericHealthData">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthData"/>
+        <owl:disjointWith rdf:resource="&hc;#NumericHealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#NumericHealthData -->
+
+    <owl:Class rdf:about="&hc;#NumericHealthData">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#Person -->
+
+    <owl:Class rdf:about="&hc;#Person">
+        <rdfs:subClassOf rdf:resource="&pront;AssociationSubject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#Systolic -->
+
+    <owl:Class rdf:about="&hc;#Systolic">
+        <rdfs:subClassOf rdf:resource="&hc;#HealthMeasurement"/>
+        <rdfs:subClassOf rdf:resource="&hc;#NumericHealthData"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#AGE_000000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#AGE_000000">
+        <rdf:type rdf:resource="&hc;#Age"/>
+        <value rdf:datatype="&xsd;integer">32</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#AGE_000001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#AGE_000001">
+        <rdf:type rdf:resource="&hc;#Age"/>
+        <value rdf:datatype="&xsd;integer">27</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#AGE_000002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#AGE_000002">
+        <rdf:type rdf:resource="&hc;#Age"/>
+        <value rdf:datatype="&xsd;integer">46</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#AGE_000003 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#AGE_000003">
+        <rdf:type rdf:resource="&hc;#Age"/>
+        <value rdf:datatype="&xsd;integer">23</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#BMI_000000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#BMI_000000">
+        <rdf:type rdf:resource="&hc;#BMI"/>
+        <value rdf:datatype="&xsd;integer">32</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#CA_0000_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#CA_0000_000">
+        <rdf:type rdf:resource="&hc;#HealthContextAcquisition"/>
+        <dataIs rdf:resource="&hc;#Prehypertension"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0000"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#CA_0001_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#CA_0001_000">
+        <rdf:type rdf:resource="&hc;#HealthContextAcquisition"/>
+        <dataIs rdf:resource="&hc;#Prehypertension"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0001"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#CA_0002_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#CA_0002_000">
+        <rdf:type rdf:resource="&hc;#HealthContextAcquisition"/>
+        <dataIs rdf:resource="&hc;#HypertensionStage1"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0002"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#CA_0003_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#CA_0003_000">
+        <rdf:type rdf:resource="&hc;#HealthContextAcquisition"/>
+        <dataIs rdf:resource="&hc;#HypertensionStage2"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0003"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#CA_0004_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#CA_0004_000">
+        <rdf:type rdf:resource="&hc;#HealthContextAcquisition"/>
+        <dataIs rdf:resource="&hc;#Normal"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0004"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0000_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0000_000">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#DIA_000000"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0000"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0000_001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0000_001">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#SYS_000000"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0000"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0000_002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0000_002">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#GEN_000000"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0000"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0000_003 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0000_003">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#AGE_000000"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0000"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0000_004 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0000_004">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#BMI_000000"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0000"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0001_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0001_000">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#DIA_000001"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0001"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0001_001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0001_001">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#SYS_000001"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0001"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0001_002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0001_002">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#AGE_000001"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0001"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0002_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0002_000">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#DIA_000002"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0002"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0002_001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0002_001">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#SYS_000002"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0002"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0003_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0003_000">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#SYS_000003"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0003"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0003_001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0003_001">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#DIA_000003"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0003"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0003_002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0003_002">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#AGE_000002"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0003"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0003_003 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0003_003">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#GEN_000001"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0003"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0004_000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0004_000">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#DIA_000004"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0004"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0004_001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0004_001">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#SYS_000004"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0004"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0004_002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0004_002">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#GEN_000002"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0004"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DA_0004_003 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DA_0004_003">
+        <rdf:type rdf:resource="&hc;#HealthDataAcquisition"/>
+        <dataIs rdf:resource="&hc;#AGE_000003"/>
+        <dataOwner rdf:resource="&hc;#TestUser_0004"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DIA_000000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DIA_000000">
+        <rdf:type rdf:resource="&hc;#Diastolic"/>
+        <value rdf:datatype="&xsd;integer">83</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DIA_000001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DIA_000001">
+        <rdf:type rdf:resource="&hc;#Diastolic"/>
+        <value rdf:datatype="&xsd;integer">84</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DIA_000002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DIA_000002">
+        <rdf:type rdf:resource="&hc;#Diastolic"/>
+        <value rdf:datatype="&xsd;integer">102</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DIA_000003 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DIA_000003">
+        <rdf:type rdf:resource="&hc;#Diastolic"/>
+        <value rdf:datatype="&xsd;integer">108</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#DIA_000004 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#DIA_000004">
+        <rdf:type rdf:resource="&hc;#Diastolic"/>
+        <value rdf:datatype="&xsd;integer">71</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#GEN_000000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#GEN_000000">
+        <rdf:type rdf:resource="&hc;#Gender"/>
+        <category>MALE</category>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#GEN_000001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#GEN_000001">
+        <rdf:type rdf:resource="&hc;#Gender"/>
+        <category>FEMALE</category>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#GEN_000002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#GEN_000002">
+        <rdf:type rdf:resource="&hc;#Gender"/>
+        <category>MALE</category>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HypertensionStage1 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#HypertensionStage1">
+        <rdf:type rdf:resource="&hc;#BloodPressure"/>
+        <rdfs:label>Hypertension Stage 1</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#HypertensionStage2 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#HypertensionStage2">
+        <rdf:type rdf:resource="&hc;#BloodPressure"/>
+        <rdfs:label>Hypertension Stage 2</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#Hypotesion -->
+
+    <owl:NamedIndividual rdf:about="&hc;#Hypotesion">
+        <rdf:type rdf:resource="&hc;#BloodPressure"/>
+        <rdfs:label>Hypotension</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#Normal -->
+
+    <owl:NamedIndividual rdf:about="&hc;#Normal">
+        <rdf:type rdf:resource="&hc;#BloodPressure"/>
+        <rdfs:label>Normal</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#Prehypertension -->
+
+    <owl:NamedIndividual rdf:about="&hc;#Prehypertension">
+        <rdf:type rdf:resource="&hc;#BloodPressure"/>
+        <rdfs:label>Prehypertension</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#SYS_000000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#SYS_000000">
+        <rdf:type rdf:resource="&hc;#Systolic"/>
+        <value rdf:datatype="&xsd;integer">132</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#SYS_000001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#SYS_000001">
+        <rdf:type rdf:resource="&hc;#Systolic"/>
+        <value rdf:datatype="&xsd;integer">119</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#SYS_000002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#SYS_000002">
+        <rdf:type rdf:resource="&hc;#Systolic"/>
+        <value rdf:datatype="&xsd;integer">153</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#SYS_000003 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#SYS_000003">
+        <rdf:type rdf:resource="&hc;#Systolic"/>
+        <value rdf:datatype="&xsd;integer">144</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#SYS_000004 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#SYS_000004">
+        <rdf:type rdf:resource="&hc;#Systolic"/>
+        <value rdf:datatype="&xsd;integer">108</value>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#TestUser_0000 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#TestUser_0000">
+        <rdf:type rdf:resource="&hc;#Person"/>
+        <hasHealthContextProbability rdf:resource="&hc;#CA_0000_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0000_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0000_001"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0000_002"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0000_003"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0000_004"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#TestUser_0001 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#TestUser_0001">
+        <rdf:type rdf:resource="&hc;#Person"/>
+        <hasHealthContextProbability rdf:resource="&hc;#CA_0001_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0001_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0001_001"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0001_002"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#TestUser_0002 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#TestUser_0002">
+        <rdf:type rdf:resource="&hc;#Person"/>
+        <hasHealthContextProbability rdf:resource="&hc;#CA_0002_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0002_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0002_001"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#TestUser_0003 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#TestUser_0003">
+        <rdf:type rdf:resource="&hc;#Person"/>
+        <hasHealthContextProbability rdf:resource="&hc;#CA_0003_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0003_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0003_001"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0003_002"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0003_003"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/health_context#TestUser_0004 -->
+
+    <owl:NamedIndividual rdf:about="&hc;#TestUser_0004">
+        <rdf:type rdf:resource="&hc;#Person"/>
+        <hasHealthContextProbability rdf:resource="&hc;#CA_0004_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0004_000"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0004_001"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0004_002"/>
+        <hasHealthDataAcquisition rdf:resource="&hc;#DA_0004_003"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.5.1) http://owlapi.sourceforge.net -->
+

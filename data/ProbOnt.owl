@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY pront "http://soft.ssu.ac.kr/ontology/probability_ontology" >
+]>
+
+
+<rdf:RDF xmlns="&pront;#"
+     xml:base="http://soft.ssu.ac.kr/ontology/probability_ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:pront="http://soft.ssu.ac.kr/ontology/probability_ontology">
+    <owl:Ontology rdf:about="http://soft.ssu.ac.kr/ontology/probability_ontology">
+        <rdfs:label>Probabilty Ontology</rdfs:label>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#associateWith -->
+
+    <owl:AnnotationProperty rdf:about="&pront;#associateWith"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#associateWith -->
+
+    <owl:ObjectProperty rdf:about="&pront;#associateWith">
+        <owl:inverseOf rdf:resource="&pront;#associateWith"/>
+        <rdfs:domain rdf:resource="&rdfs;Class"/>
+        <rdfs:range rdf:resource="&rdfs;Class"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#hasAssociationRelationship -->
+
+    <owl:ObjectProperty rdf:about="&pront;#hasAssociationRelationship">
+        <rdfs:range rdf:resource="&pront;#AssociationRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#hasProbabilityRelationship -->
+
+    <owl:ObjectProperty rdf:about="&pront;#hasProbabilityRelationship">
+        <rdfs:range rdf:resource="&pront;#ProbabilityRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#isAssociationObject -->
+
+    <owl:ObjectProperty rdf:about="&pront;#isAssociationObject">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:range rdf:resource="&pront;#AssociationObject"/>
+        <rdfs:domain rdf:resource="&pront;#AssociationRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#isAssociationSubject -->
+
+    <owl:ObjectProperty rdf:about="&pront;#isAssociationSubject">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="&pront;#AssociationRelationship"/>
+        <rdfs:range rdf:resource="&pront;#AssociationSubject"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#isNonNumericAssociationObejct -->
+
+    <owl:ObjectProperty rdf:about="&pront;#isNonNumericAssociationObejct">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:subPropertyOf rdf:resource="&pront;#isAssociationObject"/>
+        <owl:propertyDisjointWith rdf:resource="&pront;#isNumericAssociationObejct"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#isNumericAssociationObejct -->
+
+    <owl:ObjectProperty rdf:about="&pront;#isNumericAssociationObejct">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:subPropertyOf rdf:resource="&pront;#isAssociationObject"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#dataOfAssociationObject -->
+
+    <owl:DatatypeProperty rdf:about="&pront;#dataOfAssociationObject"/>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#probability -->
+
+    <owl:DatatypeProperty rdf:about="&pront;#probability">
+        <rdfs:domain rdf:resource="&pront;#ProbabilityRelationship"/>
+        <rdfs:range rdf:resource="&xsd;double"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#weight -->
+
+    <owl:DatatypeProperty rdf:about="&pront;#weight">
+        <rdfs:domain rdf:resource="&pront;#AssociationRelationship"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AssociationObject -->
+
+    <owl:Class rdf:about="&pront;#AssociationObject"/>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AssociationRelationship -->
+
+    <owl:Class rdf:about="&pront;#AssociationRelationship"/>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AssociationSubject -->
+
+    <owl:Class rdf:about="&pront;#AssociationSubject"/>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AssociationTargetRelationship -->
+
+    <owl:Class rdf:about="&pront;#AssociationTargetRelationship">
+        <rdfs:subClassOf rdf:resource="&pront;#AssociationRelationship"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#ProbabilityRelationship -->
+
+    <owl:Class rdf:about="&pront;#ProbabilityRelationship"/>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#Class -->
+
+    <owl:Class rdf:about="&rdfs;Class"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.5.1) http://owlapi.sourceforge.net -->
+
