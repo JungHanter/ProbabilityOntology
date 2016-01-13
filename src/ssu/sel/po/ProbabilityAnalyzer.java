@@ -1,7 +1,6 @@
 package ssu.sel.po;
 
 import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.ext.com.google.common.primitives.Shorts;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.query.*;
@@ -9,12 +8,9 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.util.FileManager;
-import ssu.sel.po.model.DataRange;
-import ssu.sel.po.model.NumericDataRange;
-import ssu.sel.po.model.PossibleSet;
-import ssu.sel.po.model.AssociationObjectRDFNode;
-import ssu.sel.po.utils.Combination;
-import ssu.sel.po.utils.LiteralValueType;
+
+import ssu.sel.po.model.*;
+import ssu.sel.po.utils.*;
 
 import java.io.InputStream;
 import java.math.*;
@@ -96,7 +92,7 @@ public class ProbabilityAnalyzer {
         findAssociations();
     }
 
-    private List<Triple> findAssociations() {
+    public List<Triple> findAssociations() {
         Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
 //        Reasoner reasoner = PelletReasonerFactory.theInstance().create();
         reasoner.bindSchema(alignedSchemaOntModel);
@@ -114,7 +110,6 @@ public class ProbabilityAnalyzer {
 
         //1. Find Class Type of Object of Target Association Relationship
         Map<RDFNode, List<RDFNode>> targetListMap = new HashMap<>();    //targetListType(Class), targetList(Individual)
-//        List<RDFNode> associationTypeList = new ArrayList<>();          //
 
         RDFNode lastTargetType = null;
         List<RDFNode> nowTargetList = null;
@@ -155,13 +150,12 @@ public class ProbabilityAnalyzer {
 
         //TODO to make combinationSets for each targetListType. But now, it's only for one target list type
         for (List<RDFNode> targetList : targetListMap.values()) {
-            //targetListMap.key => target Type(class)
-            //targetListMap.values => target categries value(individual)
+            /*** targetListMap.key => target Type(class)
+             *   targetListMap.values => target categries value(individual) ***/
             for (RDFNode targetCategory : targetList) {
                 Set<Set<AssociationObjectRDFNode>> setsForTarget = new HashSet<>();
                 combinationSets.put(targetCategory, setsForTarget);
 
-//                System.out.println("For " + targetCategory.toString());
                 exec = runQuery("SELECT DISTINCT ?subject ?directType ?object ?data " +
                         "WHERE {" +
                         "  ?targetRelationship pront:isAssociationObject <" + targetCategory.toString() + "> . " +
@@ -211,16 +205,46 @@ public class ProbabilityAnalyzer {
         Map<Set<RDFNode>, Integer> assCombSetMap = findAssociationCombinationWithCount(combinationSets);
         int totalCount = getAssociationCombinationTotalCount(assCombSetMap);
         Set<RDFNode> targetTypeSet = getAllTypeSet(combinationSets);
-//        Map<Integer, Set<Set<RDFNode>>> possibleSetMap = generatePossibleAssociationSet(targetTypeSet);
         Map<Integer, Set<PossibleSet>> possibleSetMap = generatePossibleAssociationSet2(targetTypeSet, assCombSetMap);
 
-        //4. Filter PossibleSet Combinations Satisfying Min Support
+        //4. Filter PossibleSet Combinations Satisfying Minimum Support
         filterPossibleSet(possibleSetMap);
 
-        //5. Anaylze Association Probability
+        //5. Analyze Association Probability
         //TODO temporary
-        analyzeAssociatinoProb(lastTargetType, combinationSets, rdfNodeDataRangeMap, possibleSetMap);
+        Set<AssociationAnalyzer> analyzerSet = assortAssociations(combinationSets, rdfNodeDataRangeMap, possibleSetMap);
 
+        /****** For test ******/
+        Set<RDFNode> aaa = null;
+        Set<AssociationObjectRDFNode> bbb = null;
+        for (RDFNode targetNode : combinationSets.keySet()) {
+            Set<Set<AssociationObjectRDFNode>> assSets = combinationSets.get(targetNode);
+            for (Set<AssociationObjectRDFNode> associationSet : assSets) {
+                Set<AssociationObjectRDFNode> numericSet = new HashSet<>();
+                Set<AssociationObjectRDFNode> nonNumericSet = new HashSet<>();
+
+                for (AssociationObjectRDFNode assNode : associationSet) {
+                    LiteralValueType valueType = rdfNodeDataRangeMap.get(assNode.getRdfType()).getValueType();
+
+                    if(valueType == LiteralValueType.Double ||
+                            valueType == LiteralValueType.Integer) {
+                        numericSet.add(assNode);
+                    } else {
+                        nonNumericSet.add(assNode);
+                    }
+                }
+                aaa = AssociationObjectRDFNode.getTypeSet(associationSet);
+                bbb = nonNumericSet;
+                break;
+            }
+            break;
+        }
+
+        for (AssociationAnalyzer analyzer : analyzerSet) {
+            Set<Set<AssociationObjectRDFNode>> foundSet = analyzer.findNumericValueSets(aaa, bbb);
+            System.out.println(foundSet);
+        }
+        /****** end test ******/
 
         return null; //TODO
     }
@@ -407,22 +431,21 @@ public class ProbabilityAnalyzer {
         }
     }
 
-    private void analyzeAssociatinoProb(RDFNode targetType,
-                                        Map<RDFNode, Set<Set<AssociationObjectRDFNode>>> combinationSets,
-                                        Map<RDFNode, DataRange> dataRangeMap,
-                                        Map<Integer, Set<PossibleSet>> possibleSetMap) {
+    // 1. Collecting and Distributing among value sets
+    private Set<AssociationAnalyzer> assortAssociations(Map<RDFNode, Set<Set<AssociationObjectRDFNode>>> combinationSets,
+                                                        Map<RDFNode, DataRange> dataRangeMap,
+                                                        Map<Integer, Set<PossibleSet>> possibleSetMap) {
+        Set<AssociationAnalyzer> analyzerSet = new HashSet<AssociationAnalyzer>();
 
-        for (RDFNode targetNode : combinationSets.keySet()) {   //each individuals as targets ex)Hypotension
-            // 1. Collecting and Distributing among value sets
+        for (RDFNode targetNode : combinationSets.keySet()) {   //each individuals as targets ex)Hypotension (Category)
             Set<Set<AssociationObjectRDFNode>> associationSets = combinationSets.get(targetNode);
-//            Map<Set<AssociationObjectRDFNode>, Set<AssociationObjectRDFNode>> valueSet = new HashMap<>();     // nonnuericValueSet, numericValueSet
             Map<Set<AssociationObjectRDFNode>, Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>>> valueSet = new HashMap<>();
 
             for (Set<AssociationObjectRDFNode> associationSet : associationSets) {
                 for (Set<PossibleSet> tempPossibleSets : possibleSetMap.values())
                     for (PossibleSet possibleSet : tempPossibleSets) {
-//                        if(associationSet.containsAll(possibleSet.getPossibleSet())) {
                         Set<RDFNode> possibleRDFNodeSet = possibleSet.getPossibleSet();
+
                         if(AssociationObjectRDFNode.containsAllType(associationSet, possibleRDFNodeSet)) {
                             //makeValueSet for each possibleSet
                             Set<AssociationObjectRDFNode> numericSet = new HashSet<>();
@@ -461,22 +484,11 @@ public class ProbabilityAnalyzer {
                         }
                     }
             }
-            System.out.println(valueSet.toString());
 
-            // 2. Analyzing association from value sets
-            for (Set<AssociationObjectRDFNode> nonNumericSet : valueSet.keySet()) {
-                Set<RDFNode> typeSet = new HashSet<>();
-                typeSet.addAll(AssociationObjectRDFNode.getTypeSet(nonNumericSet));
-
-                Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>> numericValueSetsMap = valueSet.get(nonNumericSet);
-                for (Set<RDFNode> numericTypeSet : numericValueSetsMap.keySet()) {
-                    typeSet.addAll(numericTypeSet);
-
-                    Set<Set<AssociationObjectRDFNode>> numericValueSets = numericValueSetsMap.get(numericTypeSet);
-
-                }
-            }
+            AssociationAnalyzer resultAnalyzer = new AssociationAnalyzer(targetNode, dataRangeMap, valueSet);
+            analyzerSet.add(resultAnalyzer);
         }
+        return analyzerSet;
     }
 
 
