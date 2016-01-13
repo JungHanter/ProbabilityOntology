@@ -9,4 +9,5 @@ import java.util.*;
  */
 public class AssociationAnalyzeResult {
     Set<RDFNode> typeSet;
+    Set<AssociationObjectRDFNode> rdfNodeSet
 }

@@ -442,7 +442,7 @@ public class ProbabilityAnalyzer {
                             }
 
                             Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>> numericValueSetsMap;
-                            if(valueSet.keySet().contains(nonNumericSet)) {
+                            if (valueSet.keySet().contains(nonNumericSet)) {
                                 numericValueSetsMap = valueSet.get(nonNumericSet);
                             } else {
                                 numericValueSetsMap = new HashMap<>();
@@ -451,7 +451,7 @@ public class ProbabilityAnalyzer {
 
                             Set<RDFNode> numericTypeSet = AssociationObjectRDFNode.getTypeSet(numericSet);
                             Set<Set<AssociationObjectRDFNode>> numericValueSets;
-                            if(numericValueSetsMap.keySet().contains(numericTypeSet)) {
+                            if (numericValueSetsMap.keySet().contains(numericTypeSet)) {
                                 numericValueSets = numericValueSetsMap.get(numericTypeSet);
                             } else {
                                 numericValueSets = new HashSet<>();
@@ -464,20 +464,21 @@ public class ProbabilityAnalyzer {
             System.out.println(valueSet.toString());
 
             // 2. Analyzing association from value sets
+            for (Set<AssociationObjectRDFNode> nonNumericSet : valueSet.keySet()) {
+                Set<RDFNode> typeSet = new HashSet<>();
+                typeSet.addAll(AssociationObjectRDFNode.getTypeSet(nonNumericSet));
 
+                Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>> numericValueSetsMap = valueSet.get(nonNumericSet);
+                for (Set<RDFNode> numericTypeSet : numericValueSetsMap.keySet()) {
+                    typeSet.addAll(numericTypeSet);
+
+                    Set<Set<AssociationObjectRDFNode>> numericValueSets = numericValueSetsMap.get(numericTypeSet);
+
+                }
+            }
         }
     }
 
-    /*private Set<AssociationObjectRDFNode> makeValueSet(Set<AssociationObjectRDFNode> assSet,
-                                                       Set<RDFNode> possibleSet,
-                                                       Set<AssociationObjectRDFNode> nonNumericEmptySet,
-                                                       Set<AssociationObjectRDFNode> numericEmptySet) {
-        for (AssociationObjectRDFNode rdfNode : assSet) {
-            if(possibleSet.contains(rdfNode.getRdfNode())) {
-                if(rdfNode.)
-            }
-        }
-    }*/
 
     public QueryExecution runQuery(String queryReq) {
         return runQuery(queryReq, alignedInfModel);
