@@ -213,41 +213,9 @@ public class ProbabilityAnalyzer {
         //4. Filter PossibleSet Combinations Satisfying Minimum Support
         filterPossibleSet(possibleSetMap);
 
-        //5. Analyze Association Probability
+        //5. Analyze Association Relationship
         //TODO temporary
         Set<AssociationAnalyzer> analyzerSet = assortAssociations(combinationSets, rdfNodeDataRangeMap, possibleSetMap);
-
-        /****** For test ******/
-        Set<RDFNode> aaa = null;
-        Set<AssociationObjectRDFNode> bbb = null;
-        for (RDFNode targetNode : combinationSets.keySet()) {
-            Set<Set<AssociationObjectRDFNode>> assSets = combinationSets.get(targetNode);
-            for (Set<AssociationObjectRDFNode> associationSet : assSets) {
-                Set<AssociationObjectRDFNode> numericSet = new HashSet<>();
-                Set<AssociationObjectRDFNode> nonNumericSet = new HashSet<>();
-
-                for (AssociationObjectRDFNode assNode : associationSet) {
-                    LiteralValueType valueType = rdfNodeDataRangeMap.get(assNode.getRdfType()).getValueType();
-
-                    if(valueType == LiteralValueType.Double ||
-                            valueType == LiteralValueType.Integer) {
-                        numericSet.add(assNode);
-                    } else {
-                        nonNumericSet.add(assNode);
-                    }
-                }
-                aaa = AssociationObjectRDFNode.getTypeSet(associationSet);
-                bbb = nonNumericSet;
-                break;
-            }
-            break;
-        }
-
-        for (AssociationAnalyzer analyzer : analyzerSet) {
-            Set<Set<AssociationObjectRDFNode>> foundSet = analyzer.findNumericValueSets(aaa, bbb);
-            System.out.println(foundSet);
-        }
-        /****** end test ******/
 
         return null; //TODO
     }
