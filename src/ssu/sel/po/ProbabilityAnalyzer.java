@@ -2,13 +2,19 @@ package ssu.sel.po;
 
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.ObjectProperty;
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntologyException;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.reasoner.ValidityReport;
 import org.apache.jena.util.FileManager;
 
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 import ssu.sel.po.model.*;
 import ssu.sel.po.utils.*;
 
@@ -33,8 +39,11 @@ public class ProbabilityAnalyzer {
             "PREFIX base: <http://soft.ssu.ac.kr/ontology/probability_ontology#>\n" +
             "PREFIX pront: <http://soft.ssu.ac.kr/ontology/probability_ontology#>\n";
 
-    private double minSupport = 0.25;
-    private double minConfidence = 0.5;
+    private static final double DEFAULT_MIN_SUPPORT = 0.25;
+    private static final double DEFAULT_MIN_CONFIDENCE = 0.5;
+
+    private final double minSupport;
+    private final double minConfidence;
 
     private Set<String> prefixNameSet = new HashSet<String>();
 
@@ -42,8 +51,10 @@ public class ProbabilityAnalyzer {
     private OntModel alignedSchemaOntModel;
     private OntModel alignedDataOntModel;
 
-    private InfModel alignedInfModel;
-    private InfModel associationInfModel;
+    private InfModel alignedAnalyzedModel;
+
+    //targetType / analyzeSet
+    private Map<RDFNode, Set<AssociationAnalyzer>> associationAnalyzerSetMap = null;
 
     public boolean addAlignmentSchemaOntology(String ontFile, String baseNamespace, String qname) {
         return addAlignmentSchemaOntology(ontFile, baseNamespace, qname, "");
@@ -87,23 +98,125 @@ public class ProbabilityAnalyzer {
 
     }
 
-    //TODO to change definition and implementation
-    public void analyze() {
-        findAssociations();
+    public OntModel analyze() {
+        return analyze(null);
     }
 
-    public List<Triple> findAssociations() {
+    public OntModel analyze(String defaultNamespace) {
+        if (defaultNamespace == null || defaultNamespace.isEmpty()) {
+            defaultNamespace = PROB_ONT_NAMESPACE;
+        }
+
+        findAssociations();
+
+        Map<RDFNode, Set<AssociationObjectRDFNode>> analysisTargetDataSetMap = new HashMap<>();
+
+        QueryExecution exec;
+        ResultSet rs;
+        exec = runQuery("SELECT DISTINCT ?subject ?relationship ?directType ?target ?data " +
+                "WHERE { " +
+                "  ?relationship a pront:AnalysisTargetRelationship . " +
+                "  ?subject a pront:AssociationSubject . " +
+                "  ?relationship pront:isAssociationSubject ?subject . " +
+                "  ?relationship pront:isAssociationObject ?target . " +
+                "  ?target rdf:type ?directType . " +
+                "  OPTIONAL { ?target pront:dataOfAssociationObject ?data . } " +
+                "  FILTER NOT EXISTS {" +
+                "    ?target rdf:type ?type . " +
+                "    ?type rdfs:subClassOf ?directType . " +
+                "    FILTER NOT EXISTS {" +
+                "      ?type owl:equivalentClass ?directType . " +
+                "      FILTER (NOT EXISTS {?type owl:equivalentClass owl:NamedIndividual . }) " +
+                "    }" +
+                "  }" +
+                "} ORDER BY ?subject ", alignedAnalyzedModel);
+        rs = exec.execSelect();
+
+        RDFNode lastSubj = null;
+        Set<AssociationObjectRDFNode> nowSet = null;
+        while(rs.hasNext()) {
+            QuerySolution soln = rs.nextSolution();
+            RDFNode subj = soln.get("?subject");
+            RDFNode relationship = soln.get("?relationship");
+            RDFNode dataType = soln.get("?directType");
+            RDFNode dataObj = soln.get("?target");
+            RDFNode data = soln.get("?data");
+
+            if (!subj.equals(lastSubj)) {
+                lastSubj = subj;
+                nowSet = new HashSet<>();
+                analysisTargetDataSetMap.put(subj, nowSet);
+            }
+            if (data == null) nowSet.add(new AssociationObjectRDFNode(dataObj, dataType));
+            else nowSet.add(new AssociationObjectRDFNode(dataObj, dataType, (Literal)data));
+        }
+        exec.close();
+
+        OntModel resultModel = ModelFactory.createOntologyModel();
+        Resource resProbRelType = alignedSchemaOntModel.getResource("http://soft.ssu.ac.kr/ontology/probability_ontology#ProbabilityRelationship");
+        ObjectProperty propHasProbRel = alignedSchemaOntModel.getObjectProperty("http://soft.ssu.ac.kr/ontology/probability_ontology#hasProbabilityRelationship");
+        ObjectProperty propIsProbSubj = alignedSchemaOntModel.getObjectProperty("http://soft.ssu.ac.kr/ontology/probability_ontology#isProbabilitySubject");
+        ObjectProperty propIsProbObj = alignedSchemaOntModel.getObjectProperty("http://soft.ssu.ac.kr/ontology/probability_ontology#isProbabilityObject");
+        DatatypeProperty propProbability = alignedSchemaOntModel.getDatatypeProperty("http://soft.ssu.ac.kr/ontology/probability_ontology#probability");
+
+        //for each subject individuals
+        for (RDFNode subject : analysisTargetDataSetMap.keySet()) {
+            Set<AssociationObjectRDFNode> dataSet = analysisTargetDataSetMap.get(subject);
+
+            //for each analysis result target type
+            for (RDFNode resultType : associationAnalyzerSetMap.keySet()) {
+                Set<AssociationAnalyzer> analyzerSet = associationAnalyzerSetMap.get(resultType);
+
+                RDFNode resultNode = null;
+                double probability = 0.0;
+
+                //for each analyzer in same class
+                for(AssociationAnalyzer analyzer : analyzerSet) {
+                    RDFNode nowResultNode = analyzer.getTargetNode();
+                    double nowProbability = analyzer.analyzeAssociationProbability(dataSet);
+                    //select highest probabiltity result node
+                    if(resultNode == null) {
+                        resultNode = nowResultNode;
+                        probability = nowProbability;
+                    } else {
+                        if (probability < nowProbability) {
+                            resultNode = nowResultNode;
+                            probability = nowProbability;
+                        }
+                    }
+                }
+
+                if (resultNode != null && probability > minConfidence) {
+                    Resource analysisSubject = subject.asResource();
+                    Resource resProbRel = resultModel.createResource(defaultNamespace + "instanceOfProbRel_" + System.currentTimeMillis()); //temporary URI
+                    resultModel.add(resProbRel, RDF.type, resProbRelType);
+                    resultModel.add(analysisSubject, propHasProbRel, resProbRel);
+                    resultModel.add(resProbRel, propIsProbSubj, analysisSubject);
+
+                    Resource targetResultObject = resultNode.asResource();
+                    resultModel.add(resProbRel, propIsProbObj, targetResultObject);
+
+                    probability = (Math.round(probability*100))/100.0;
+                    Literal litProb = resultModel.createTypedLiteral(probability);
+                    resultModel.add(resProbRel, propProbability, litProb);
+                }
+            }
+        }
+
+        return resultModel;
+    }
+
+    private void findAssociations() {
         Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
 //        Reasoner reasoner = PelletReasonerFactory.theInstance().create();
         reasoner.bindSchema(alignedSchemaOntModel);
-        alignedInfModel = ModelFactory.createInfModel(reasoner, alignedDataOntModel);
+        alignedAnalyzedModel = ModelFactory.createInfModel(reasoner, alignedDataOntModel);
 
-//        ValidityReport report = alignedSchemaOntModel.validate();
-//        printIterator(report.getReports(), "alignedSchemaOntModel");
-//        report = alignedDataOntModel.validate();
-//        printIterator(report.getReports(), "Validation Results for alignedDataOntModel");
-//        report = alignedInfModel.validate();
-//        printIterator(report.getReports(), "Validation Results for alignedInfModel");
+        ValidityReport report = alignedAnalyzedModel.validate();
+        if(!report.isValid() || !report.isClean()) {
+            throw new OntologyException(makeStringIterator(report.getReports(),
+                    "Validation Results for analyzedModel"));
+        }
 
         QueryExecution exec = null;
         ResultSet rs = null;
@@ -127,7 +240,7 @@ public class ProbabilityAnalyzer {
                 "      FILTER (NOT EXISTS {?type owl:equivalentClass owl:NamedIndividual . }) "+
                 "    }" +
                 "  }" +
-                "} ORDER BY ?directType", alignedInfModel);
+                "} ORDER BY ?directType", alignedAnalyzedModel);
         rs = exec.execSelect();
         while (rs.hasNext()) {
             QuerySolution soln = rs.nextSolution();
@@ -144,14 +257,19 @@ public class ProbabilityAnalyzer {
         }
         exec.close();
 
-        //2. Retrieve all related association data for each target and make combination
-        Map<RDFNode, Set<Set<AssociationObjectRDFNode>>> combinationSets = new HashMap<>();   //targetNode(Individual/Category), associationSetsForTargetNode
-        Map<RDFNode, DataRange> rdfNodeDataRangeMap = new HashMap<>(); //nodeType, datarnage
 
-        //TODO to make combinationSets for each targetListType. But now, it's only for one target list type
-        for (List<RDFNode> targetList : targetListMap.values()) {
+        associationAnalyzerSetMap = new HashMap<>();
+
+        //To make combinationSets for each targetListType.
+        for (RDFNode targetType : targetListMap.keySet()) {
             /*** targetListMap.key => target Type(class)
              *   targetListMap.values => target categries value(individual) ***/
+            List<RDFNode> targetList = targetListMap.get(targetType);
+
+            //2. Retrieve all related association data for each target and make combination
+            Map<RDFNode, Set<Set<AssociationObjectRDFNode>>> combinationSets = new HashMap<>();   //targetNode(Individual/Category), associationSetsForTargetNode
+            Map<RDFNode, DataRange> rdfNodeDataRangeMap = new HashMap<>(); //nodeType, datarnage
+
             for (RDFNode targetCategory : targetList) {
                 Set<Set<AssociationObjectRDFNode>> setsForTarget = new HashSet<>();
                 combinationSets.put(targetCategory, setsForTarget);
@@ -175,9 +293,9 @@ public class ProbabilityAnalyzer {
                         "      FILTER (NOT EXISTS {?type owl:equivalentClass owl:NamedIndividual . }) " +
                         "    }" +
                         "  }" +
-                        "} ORDER BY ?subject", alignedInfModel);
-
+                        "} ORDER BY ?subject", alignedAnalyzedModel);
                 rs = exec.execSelect();
+
                 RDFNode lastSubj = null;
                 Set<AssociationObjectRDFNode> nowSet = null;
                 while (rs.hasNext()) {
@@ -201,23 +319,23 @@ public class ProbabilityAnalyzer {
                     //add and update datarange
                     addDataRange(rdfNodeDataRangeMap, obj, type, data);
                 }
+                exec.close();
             }
+
+            //3. Find Association Combinations
+            Map<Set<RDFNode>, Integer> assCombSetMap = findAssociationCombinationWithCount(combinationSets);
+            int totalCount = getAssociationCombinationTotalCount(assCombSetMap);
+            Set<RDFNode> targetTypeSet = getAllTypeSet(combinationSets);
+            Map<Integer, Set<PossibleSet>> possibleSetMap = generatePossibleAssociationSet2(targetTypeSet, assCombSetMap);
+
+            //4. Filter PossibleSet Combinations Satisfying Minimum Support
+            filterPossibleSet(possibleSetMap);
+
+            //5. Analyze Association Relationship
+            Set<AssociationAnalyzer> analyzerSet = assortAssociations(combinationSets, rdfNodeDataRangeMap, possibleSetMap);
+            associationAnalyzerSetMap.put(targetType, analyzerSet);
         }
 
-        //3. Find Association Combinations
-        Map<Set<RDFNode>, Integer> assCombSetMap = findAssociationCombinationWithCount(combinationSets);
-        int totalCount = getAssociationCombinationTotalCount(assCombSetMap);
-        Set<RDFNode> targetTypeSet = getAllTypeSet(combinationSets);
-        Map<Integer, Set<PossibleSet>> possibleSetMap = generatePossibleAssociationSet2(targetTypeSet, assCombSetMap);
-
-        //4. Filter PossibleSet Combinations Satisfying Minimum Support
-        filterPossibleSet(possibleSetMap);
-
-        //5. Analyze Association Relationship
-        //TODO temporary
-        Set<AssociationAnalyzer> analyzerSet = assortAssociations(combinationSets, rdfNodeDataRangeMap, possibleSetMap);
-
-        return null; //TODO
     }
 
     private void addDataRange(Map<RDFNode, DataRange> dataRangeMap,
@@ -456,18 +574,17 @@ public class ProbabilityAnalyzer {
                     }
             }
 
-            AssociationAnalyzer resultAnalyzer = new AssociationAnalyzer(targetNode, dataRangeMap, valueSet);
+            AssociationAnalyzer resultAnalyzer = new AssociationAnalyzer(targetNode, dataRangeMap, possibleSetMap, valueSet);
             analyzerSet.add(resultAnalyzer);
         }
         return analyzerSet;
     }
 
-
-    public QueryExecution runQuery(String queryReq) {
-        return runQuery(queryReq, alignedInfModel);
+    private QueryExecution runQuery(String queryReq) {
+        return runQuery(queryReq, alignedAnalyzedModel);
     }
 
-    public QueryExecution runQuery(String queryReq, Model model) {
+    private QueryExecution runQuery(String queryReq, Model model) {
         StringBuffer queryStr = new StringBuffer();
         queryStr.append(prefixString);
         queryStr.append(queryReq);
@@ -479,11 +596,11 @@ public class ProbabilityAnalyzer {
     }
 
     //for test
-    public void runQueryAndPrint(String queryReq) {
-        runQueryAndPrint(queryReq, alignedInfModel);
+    private void runQueryAndPrint(String queryReq) {
+        runQueryAndPrint(queryReq, alignedAnalyzedModel);
     }
 
-    public void runQueryAndPrint(String queryReq, Model model) {
+    private void runQueryAndPrint(String queryReq, Model model) {
         StringBuffer queryStr = new StringBuffer();
         queryStr.append(prefixString);
         queryStr.append(queryReq);
@@ -521,6 +638,16 @@ public class ProbabilityAnalyzer {
         prefixString += "PREFIX " + qname + ": <" + baseNamespace + ">\n";
     }
 
+    public void printResult(Model resultModel) {
+        runQueryAndPrint("SELECT DISTINCT ?subject ?analyzedTargetObj ?probability " +
+                "WHERE { " +
+                "  ?probabilityRelationship a pront:ProbabilityRelationship . " +
+                "  ?probabilityRelationship pront:isProbabilitySubject ?subject . " +
+                "  ?probabilityRelationship pront:isProbabilityObject ?analyzedTargetObj . " +
+                "  ?probabilityRelationship pront:probability ?probability . " +
+                "}", resultModel);
+    }
+
     public ProbabilityAnalyzer() {
         probOntModel = loadOntology(PROB_ONTOLOYY, PROB_ONT_NAMESPACE, "RDF/XML");
 
@@ -528,11 +655,30 @@ public class ProbabilityAnalyzer {
         alignedSchemaOntModel.add(probOntModel);
 
         alignedDataOntModel = ModelFactory.createOntologyModel();
+
+        //default values
+        minSupport = DEFAULT_MIN_SUPPORT;
+        minConfidence = DEFAULT_MIN_CONFIDENCE;
+    }
+
+    public ProbabilityAnalyzer(double minSupport, double minConfidence) {
+        probOntModel = loadOntology(PROB_ONTOLOYY, PROB_ONT_NAMESPACE, "RDF/XML");
+
+        alignedSchemaOntModel = ModelFactory.createOntologyModel();
+        alignedSchemaOntModel.add(probOntModel);
+
+        alignedDataOntModel = ModelFactory.createOntologyModel();
+
+        if(minSupport < 0.0 || minSupport > 1.0) this.minSupport = DEFAULT_MIN_SUPPORT;
+        else this.minSupport = minSupport;
+        if(minConfidence < 0.0 || minConfidence > 1.0) this.minConfidence = DEFAULT_MIN_CONFIDENCE;
+        else this.minConfidence = minConfidence;
     }
 
     private OntModel loadOntology(String ontFile, String baseNamespace) {
         return loadOntology(ontFile, baseNamespace, "");
     }
+
     private OntModel loadOntology(String ontFile, String baseNamespace, String language) {
         OntModel model = ModelFactory.createOntologyModel();
         InputStream isOnt = null;
@@ -552,19 +698,33 @@ public class ProbabilityAnalyzer {
         return model;
     }
 
+    public OntModel getAlignedSchemaOntModel() {
+        return alignedSchemaOntModel;
+    }
 
-    public static void printIterator(Iterator i, String header) {
-        System.out.println(header);
+    public OntModel getAlignedDataOntModel() {
+        return alignedDataOntModel;
+    }
+
+    public InfModel getAnalyzedModel() {
+        return alignedAnalyzedModel;
+    }
+
+    public static String makeStringIterator(Iterator i, String header) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(header).append('\n');
         for(int c = 0; c < header.length(); c++)
-            System.out.print("=");
-        System.out.println();
+            sb.append('=');
+        sb.append('\n');
 
         if(i.hasNext()) {
             while (i.hasNext())
-                System.out.println( i.next() );
+                sb.append( i.next() ).append('\n');
         } else
-            System.out.println("<EMPTY>");
-        System.out.println();
+            sb.append("<EMPTY>").append('\n');
+        sb.append('\n');
 
+        return sb.toString();
     }
 }

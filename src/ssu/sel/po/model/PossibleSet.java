@@ -49,4 +49,5 @@ public class PossibleSet {
     public int getSize() {
         return possibleSet.size();
     }
+
 }

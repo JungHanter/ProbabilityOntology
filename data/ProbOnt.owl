@@ -62,6 +62,7 @@
     <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#hasProbabilityRelationship -->
 
     <owl:ObjectProperty rdf:about="&pront;#hasProbabilityRelationship">
+        <rdfs:domain rdf:resource="&pront;#AssociationSubject"/>
         <rdfs:range rdf:resource="&pront;#ProbabilityRelationship"/>
     </owl:ObjectProperty>
     
@@ -106,6 +107,25 @@
     
 
 
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#isProbabilityObject -->
+
+    <owl:ObjectProperty rdf:about="&pront;#isProbabilityObject">
+        <rdfs:range rdf:resource="&pront;#AssociationObject"/>
+        <rdfs:domain rdf:resource="&pront;#ProbabilityRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#isProbabilitySubject -->
+
+    <owl:ObjectProperty rdf:about="&pront;#isProbabilitySubject">
+        <rdfs:range rdf:resource="&pront;#AssociationSubject"/>
+        <rdfs:domain rdf:resource="&pront;#ProbabilityRelationship"/>
+        <owl:inverseOf rdf:resource="&pront;#hasProbabilityRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -119,7 +139,9 @@
 
     <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#dataOfAssociationObject -->
 
-    <owl:DatatypeProperty rdf:about="&pront;#dataOfAssociationObject"/>
+    <owl:DatatypeProperty rdf:about="&pront;#dataOfAssociationObject">
+        <rdfs:domain rdf:resource="&pront;#AssociationObject"/>
+    </owl:DatatypeProperty>
     
 
 

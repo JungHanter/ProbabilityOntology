@@ -1,8 +1,10 @@
 package ssu.sel.po.tester;
 
+import org.apache.jena.ontology.OntModel;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.vocabulary.RDF;
@@ -26,30 +28,10 @@ public class ProbabilityOntTester {
         analyzer.addAlignmentSchemaOntology(HEALTH_CONTEXT_ONTOLOGY, HCTX_ONT_NAMESPACE, "hctx", "RDF/XML");
         analyzer.addAlignmentDataOntology(HEALTH_CONTEXT_ONTOLOGY, HCTX_ONT_NAMESPACE, "hctx", "RDF/XML");
 
-        analyzer.analyze();
+        Model resultModel = analyzer.analyze(HCTX_ONT_NAMESPACE);
+        Model analyzedModel = analyzer.getAnalyzedModel();
+        analyzedModel.add(resultModel);
 
-
-
-        /*analyzer.runQueryAndPrint("SELECT DISTINCT ?objectClass \n" +
-                "WHERE {\n" +
-                "  ?association a pront:AssociationTargetRelationship . \n" +
-                "  ?association pront:associationObject ?obj . \n" +
-                "  ?obj a ?objectClass" +
-                "}");
-
-        analyzer.runQueryAndPrint("SELECT DISTINCT ?subjectClass \n" +
-                "WHERE {\n" +
-                "  ?association a pront:AssociationTargetRelationship . \n" +
-                "  ?association pront:associationSubject ?subj . \n" +
-                "  ?subj a ?subjectClass" +
-                "}");
-
-        analyzer.runQueryAndPrint("SELECT DISTINCT ?subj ?association \n" +
-                "WHERE {\n" +
-                "  ?association a pront:AssociationTargetRelationship . \n" +
-                "  ?association pront:associationSubject ?subj" +
-                "} ORDER BY ?subj");*/
+        analyzer.printResult(analyzedModel);
     }
-
-
 }
