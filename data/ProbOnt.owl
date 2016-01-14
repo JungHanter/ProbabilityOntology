@@ -152,9 +152,9 @@
     
 
 
-    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AnalysisTargetRealtionship -->
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AnalysisTargetRelationship -->
 
-    <owl:Class rdf:about="&pront;#AnalysisTargetRealtionship">
+    <owl:Class rdf:about="&pront;#AnalysisTargetRelationship">
         <rdfs:subClassOf rdf:resource="&pront;#AssociationRelationship"/>
     </owl:Class>
     

@@ -161,8 +161,8 @@ public class ProbabilityAnalyzer {
                         "  ?targetRelationship a pront:AssociationTargetRelationship . " + //added
                         "  ?targetRelationship pront:isAssociationObject <" + targetCategory.toString() + "> . " +
                         "  ?targetRelationship pront:isAssociationSubject ?subject . " +
-                        "  ?associationRelationship a pront:AssociationRelationship . " +
-                        "  FILTER (NOT EXISTS {?associationRelationship a pront:AnalysisTargetRelationship . })" + //added
+                        "  ?associationRelationship a pront:AssociationRelationship . " + //added
+                        "  FILTER (NOT EXISTS {?associationRelationship a pront:AnalysisTargetRelationship . }) " + //added
                         "  ?associationRelationship pront:isAssociationSubject ?subject . " +
                         "  ?associationRelationship pront:isAssociationObject ?object . " +
                         "  OPTIONAL { ?object pront:dataOfAssociationObject ?data . } " +
