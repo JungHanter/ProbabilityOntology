@@ -1,17 +1,7 @@
 package ssu.sel.po.tester;
 
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.util.FileManager;
-import org.apache.jena.vocabulary.RDF;
 import ssu.sel.po.ProbabilityAnalyzer;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import java.util.*;
 
