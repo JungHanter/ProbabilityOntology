@@ -156,32 +156,13 @@ public class ProbabilityAnalyzer {
                 Set<Set<AssociationObjectRDFNode>> setsForTarget = new HashSet<>();
                 combinationSets.put(targetCategory, setsForTarget);
 
-                runQueryAndPrint("SELECT DISTINCT ?subject ?directType ?object ?data " +
+                exec = runQuery("SELECT DISTINCT ?subject ?directType ?object ?data " +
                         "WHERE {" +
                         "  ?targetRelationship a pront:AssociationTargetRelationship . " + //added
                         "  ?targetRelationship pront:isAssociationObject <" + targetCategory.toString() + "> . " +
                         "  ?targetRelationship pront:isAssociationSubject ?subject . " +
                         "  ?associationRelationship a pront:AssociationRelationship . " + //added
                         "  FILTER (NOT EXISTS {?associationRelationship a pront:AnalysisTargetRelationship . }) " + //added
-                        "  ?associationRelationship pront:isAssociationSubject ?subject . " +
-                        "  ?associationRelationship pront:isAssociationObject ?object . " +
-                        "  OPTIONAL { ?object pront:dataOfAssociationObject ?data . } " +
-                        "  ?object rdf:type ?directType . " +
-                        "  FILTER NOT EXISTS {" +
-                        "    ?object rdf:type ?type . " +
-                        "    ?type rdfs:subClassOf ?directType . " +
-                        "    FILTER NOT EXISTS {" +
-                        "      ?type owl:equivalentClass ?directType . " +
-                        "      FILTER (NOT EXISTS {?type owl:equivalentClass owl:NamedIndividual . }) " +
-                        "    }" +
-                        "  }" +
-                        "} ORDER BY ?subject", alignedInfModel);
-
-                exec = runQuery("SELECT DISTINCT ?subject ?directType ?object ?data " +
-                        "WHERE {" +
-                        "  ?targetRelationship pront:isAssociationObject <" + targetCategory.toString() + "> . " +
-                        "  ?targetRelationship pront:isAssociationSubject ?subject . " +
-                        "  ?associationRelationship a pront:AssociationRelationship . " +
                         "  ?associationRelationship pront:isAssociationSubject ?subject . " +
                         "  ?associationRelationship pront:isAssociationObject ?object . " +
                         "  OPTIONAL { ?object pront:dataOfAssociationObject ?data . } " +
