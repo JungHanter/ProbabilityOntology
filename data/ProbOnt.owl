@@ -51,16 +51,6 @@
     
 
 
-    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#associateWith -->
-
-    <owl:ObjectProperty rdf:about="&pront;#associateWith">
-        <owl:inverseOf rdf:resource="&pront;#associateWith"/>
-        <rdfs:domain rdf:resource="&rdfs;Class"/>
-        <rdfs:range rdf:resource="&rdfs;Class"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#hasAssociationRelationship -->
 
     <owl:ObjectProperty rdf:about="&pront;#hasAssociationRelationship">
@@ -162,21 +152,50 @@
     
 
 
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AnalysisTargetRealtionship -->
+
+    <owl:Class rdf:about="&pront;#AnalysisTargetRealtionship">
+        <rdfs:subClassOf rdf:resource="&pront;#AssociationRelationship"/>
+    </owl:Class>
+    
+
+
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AssociaitonThing -->
+
+    <owl:Class rdf:about="&pront;#AssociaitonThing">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&pront;#AssociationObject"/>
+                    <rdf:Description rdf:about="&pront;#AssociationSubject"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
     <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AssociationObject -->
 
-    <owl:Class rdf:about="&pront;#AssociationObject"/>
+    <owl:Class rdf:about="&pront;#AssociationObject">
+        <rdfs:subClassOf rdf:resource="&pront;#AssociaitonThing"/>
+    </owl:Class>
     
 
 
     <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AssociationRelationship -->
 
-    <owl:Class rdf:about="&pront;#AssociationRelationship"/>
+    <owl:Class rdf:about="&pront;#AssociationRelationship">
+        <rdfs:subClassOf rdf:resource="&pront;#Relationship"/>
+    </owl:Class>
     
 
 
     <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#AssociationSubject -->
 
-    <owl:Class rdf:about="&pront;#AssociationSubject"/>
+    <owl:Class rdf:about="&pront;#AssociationSubject">
+        <rdfs:subClassOf rdf:resource="&pront;#AssociaitonThing"/>
+    </owl:Class>
     
 
 
@@ -190,13 +209,15 @@
 
     <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#ProbabilityRelationship -->
 
-    <owl:Class rdf:about="&pront;#ProbabilityRelationship"/>
+    <owl:Class rdf:about="&pront;#ProbabilityRelationship">
+        <rdfs:subClassOf rdf:resource="&pront;#Relationship"/>
+    </owl:Class>
     
 
 
-    <!-- http://www.w3.org/2000/01/rdf-schema#Class -->
+    <!-- http://soft.ssu.ac.kr/ontology/probability_ontology#Relationship -->
 
-    <owl:Class rdf:about="&rdfs;Class"/>
+    <owl:Class rdf:about="&pront;#Relationship"/>
 </rdf:RDF>
 
 
