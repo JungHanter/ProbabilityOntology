@@ -55,6 +55,8 @@
 
     <owl:ObjectProperty rdf:about="&pront;#hasAssociationRelationship">
         <rdfs:range rdf:resource="&pront;#AssociationRelationship"/>
+        <rdfs:domain rdf:resource="&pront;#AssociationSubject"/>
+        <owl:inverseOf rdf:resource="&pront;#isAssociationSubject"/>
     </owl:ObjectProperty>
     
 
