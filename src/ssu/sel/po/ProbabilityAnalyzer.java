@@ -266,7 +266,7 @@ public class ProbabilityAnalyzer {
              *   targetListMap.values => target categries value(individual) ***/
             List<RDFNode> targetList = targetListMap.get(targetType);
 
-            //2. Retrieve all related association data for each target and make combination
+            //2. Retrieve all related association data for each target
             Map<RDFNode, Set<Set<AssociationObjectRDFNode>>> combinationSets = new HashMap<>();   //targetNode(Individual/Category), associationSetsForTargetNode
             Map<RDFNode, DataRange> rdfNodeDataRangeMap = new HashMap<>(); //nodeType, datarnage
 
