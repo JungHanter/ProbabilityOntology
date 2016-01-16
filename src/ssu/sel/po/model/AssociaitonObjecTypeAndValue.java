@@ -28,6 +28,18 @@ public class AssociaitonObjecTypeAndValue {
         return data;
     }
 
+    public int getDataInteger() {
+        return data.getInt();
+    }
+
+    public double getDataDouble() {
+        return data.getDouble();
+    }
+
+    public String getDataString() {
+        return data.getString();
+    }
+
     @Override
     public String toString() {
         return rdfType.toString() + " " + data.toString();
