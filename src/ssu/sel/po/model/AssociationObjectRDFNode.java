@@ -105,6 +105,10 @@ public class AssociationObjectRDFNode {
         }
     }
 
+    public AssociaitonObjecTypeAndValue toTypeAndValue() {
+        return new AssociaitonObjecTypeAndValue(this);
+    }
+
     public static boolean containsType(Set<AssociationObjectRDFNode> assSet, RDFNode nodeType) {
         Iterator<AssociationObjectRDFNode> it = assSet.iterator();
         if (nodeType==null) {

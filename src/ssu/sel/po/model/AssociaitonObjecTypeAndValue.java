@@ -15,6 +15,11 @@ public class AssociaitonObjecTypeAndValue {
         this.data = data;
     }
 
+    public AssociaitonObjecTypeAndValue(AssociationObjectRDFNode node) {
+        this.rdfType = node.getRdfType();
+        this.data = node.getDataRDF();
+    }
+
     public RDFNode getRdfType() {
         return rdfType;
     }
@@ -33,7 +38,8 @@ public class AssociaitonObjecTypeAndValue {
         if(obj instanceof  AssociaitonObjecTypeAndValue) {
             AssociaitonObjecTypeAndValue typeValue = (AssociaitonObjecTypeAndValue) obj;
             if(typeValue.rdfType != rdfType) return false;
-            if(!typeValue.data.toString().equals(data.toString())) return false;
+//            if(!typeValue.data.toString().equals(data.toString())) return false;
+            if(!typeValue.data.getValue().equals(data.getValue())) return false;
             return true;
         } else {
             return false;
