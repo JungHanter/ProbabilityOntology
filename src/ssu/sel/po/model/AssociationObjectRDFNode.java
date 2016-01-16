@@ -100,6 +100,11 @@ public class AssociationObjectRDFNode {
             if(node.rdfType != rdfType) return false;
             if(!node.data.toString().equals(data.toString())) return false;
             return true;
+        } else if (obj instanceof  AssociaitonObjecTypeAndValue) {
+            AssociaitonObjecTypeAndValue typeValue = (AssociaitonObjecTypeAndValue) obj;
+            if(typeValue.rdfType != rdfType) return false;
+            if(!typeValue.data.toString().equals(data.toString())) return false;
+            return true;
         } else {
             return false;
         }

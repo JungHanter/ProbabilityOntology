@@ -15,12 +15,12 @@ public class AssociationAnalyzer {
     final private RDFNode targetNode;   //targetIndividaul (Category)
     final private Map<RDFNode, DataRange> dataRangeMap;
     final private Map<Integer, Set<PossibleSet>> possibleSetMap;
-    final private Map<Set<AssociationObjectRDFNode>, Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>>> valueSet;
+    final private Map<Set<AssociaitonObjecTypeAndValue>, Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>>> valueSet;
 
     public AssociationAnalyzer(RDFNode targetNode,
                                Map<RDFNode, DataRange> dataRangeMap,
                                Map<Integer, Set<PossibleSet>> possibleSetMap,
-                               Map<Set<AssociationObjectRDFNode>, Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>>> valueSet) {
+                               Map<Set<AssociaitonObjecTypeAndValue>, Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>>> valueSet) {
         this.targetNode = targetNode;
         this.dataRangeMap = dataRangeMap;
         this.possibleSetMap = possibleSetMap;
@@ -41,7 +41,7 @@ public class AssociationAnalyzer {
         }
 
         Set<AssociationObjectRDFNode> numericSet = new HashSet<>();
-        Set<AssociationObjectRDFNode> nonNumericSet = new HashSet<>();
+        Set<AssociaitonObjecTypeAndValue> nonNumericSet = new HashSet<>();
         for (AssociationObjectRDFNode assNode : associationSet) {
             LiteralValueType valueType = dataRangeMap.get(assNode.getRdfType()).getValueType();
 
@@ -49,7 +49,7 @@ public class AssociationAnalyzer {
                     valueType == LiteralValueType.Integer) {
                 numericSet.add(assNode);
             } else {
-                nonNumericSet.add(assNode);
+                nonNumericSet.add(assNode.toTypeAndValue());
             }
         }
 
@@ -130,13 +130,14 @@ public class AssociationAnalyzer {
         Set<RDFNode> findingNonNumericTypeSet = getNonNumericTypeSet(findingTypeSet);*/
     private Set<Set<AssociationObjectRDFNode>> findNumericValueSets(Set<RDFNode> findingNumericTypeSet,
                                                                    Set<RDFNode> findingNonNumericTypeSet,
-                                                                   Set<AssociationObjectRDFNode> findingNonNumericSet) {
-        if(!findingNonNumericTypeSet.equals(AssociationObjectRDFNode.getTypeSet(findingNonNumericSet))) {
+                                                                   Set<AssociaitonObjecTypeAndValue> findingNonNumericSet) {
+        if(!findingNonNumericTypeSet.equals(AssociaitonObjecTypeAndValue.getTypeSet(findingNonNumericSet))) {
             return null;
         }
 
-        for (Set<AssociationObjectRDFNode> nonNumericSet : valueSet.keySet()) {
-            if (AssociationObjectRDFNode.getTypeSet(nonNumericSet).equals(findingNonNumericTypeSet)) {
+        for (Set<AssociaitonObjecTypeAndValue> nonNumericSet : valueSet.keySet()) {
+            if (AssociaitonObjecTypeAndValue.getTypeSet(nonNumericSet).equals(findingNonNumericTypeSet)
+                    && nonNumericSet.equals(findingNonNumericSet)) {
                 Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>> numericValueSetsMap = valueSet.get(nonNumericSet);
                 if(numericValueSetsMap == null) return null;
                 Set<Set<AssociationObjectRDFNode>> numericValueSets = numericValueSetsMap.get(findingNumericTypeSet);

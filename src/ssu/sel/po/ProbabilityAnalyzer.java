@@ -528,7 +528,7 @@ public class ProbabilityAnalyzer {
 
         for (RDFNode targetNode : combinationSets.keySet()) {   //each individuals as targets ex)Hypotension (Category)
             Set<Set<AssociationObjectRDFNode>> associationSets = combinationSets.get(targetNode);
-            Map<Set<AssociationObjectRDFNode>, Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>>> valueSet = new HashMap<>();
+            Map<Set<AssociaitonObjecTypeAndValue>, Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>>> valueSet = new HashMap<>();
 
             for (Set<AssociationObjectRDFNode> associationSet : associationSets) {
                 for (Set<PossibleSet> tempPossibleSets : possibleSetMap.values())
@@ -538,7 +538,7 @@ public class ProbabilityAnalyzer {
                         if(AssociationObjectRDFNode.containsAllType(associationSet, possibleRDFNodeSet)) {
                             //makeValueSet for each possibleSet
                             Set<AssociationObjectRDFNode> numericSet = new HashSet<>();
-                            Set<AssociationObjectRDFNode> nonNumericSet = new HashSet<>();
+                            Set<AssociaitonObjecTypeAndValue> nonNumericSet = new HashSet<>();
 
                             for (AssociationObjectRDFNode assNode : associationSet) {
                                 if(possibleRDFNodeSet.contains(assNode.getRdfType())) {
@@ -548,13 +548,14 @@ public class ProbabilityAnalyzer {
                                             valueType == LiteralValueType.Integer) {
                                         numericSet.add(assNode);
                                     } else {
-                                        nonNumericSet.add(assNode);
+                                        nonNumericSet.add(assNode.toTypeAndValue());
                                     }
                                 }
                             }
 
                             Map<Set<RDFNode>,Set<Set<AssociationObjectRDFNode>>> numericValueSetsMap;
-                            if (valueSet.keySet().contains(nonNumericSet)) {
+//                            if (valueSet.keySet().contains(nonNumericSet)) {
+                            if (AssociaitonObjecTypeAndValue.containsSet(valueSet.keySet(), nonNumericSet)) {
                                 numericValueSetsMap = valueSet.get(nonNumericSet);
                             } else {
                                 numericValueSetsMap = new HashMap<>();

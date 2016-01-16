@@ -25,9 +25,9 @@ public class ProbabilityOntTester {
         analyzer.addAlignmentSchemaOntology(HEALTH_CONTEXT_ONTOLOGY, HCTX_ONT_NAMESPACE, "hctx", "RDF/XML");
         analyzer.addAlignmentDataOntology(HEALTH_CONTEXT_ONTOLOGY, HCTX_ONT_NAMESPACE, "hctx", "RDF/XML");
 
-        analyzer.addAlignmentDataOntology(makeTestLearningDataset(analyzer.getAlignedSchemaOntModel(), 100),
+        analyzer.addAlignmentDataOntology(makeTestLearningDataset(analyzer.getAlignedSchemaOntModel(), 10),
                 HCTX_ONT_NAMESPACE, "hctx");
-        analyzer.addAlignmentDataOntology(makeTestAnalysintInputDataset(analyzer.getAlignedSchemaOntModel(), 10),
+        analyzer.addAlignmentDataOntology(makeTestAnalysintInputDataset(analyzer.getAlignedSchemaOntModel(), 3),
                 HCTX_ONT_NAMESPACE, "hctx");
 
         Model resultModel = analyzer.analyze(HCTX_ONT_NAMESPACE);
