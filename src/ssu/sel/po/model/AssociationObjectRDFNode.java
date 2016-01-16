@@ -82,6 +82,29 @@ public class AssociationObjectRDFNode {
         }
     }
 
+    public boolean equalsNode(Object obj) {
+        if(obj instanceof AssociationObjectRDFNode) {
+            AssociationObjectRDFNode associationObjectRdfNode = (AssociationObjectRDFNode) obj;
+            return rdfNode.equals(associationObjectRdfNode.rdfNode);
+        } else if (obj instanceof RDFNode) {
+            RDFNode node = (RDFNode)obj;
+            return this.rdfNode.equals(node);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean equalsTypeAndValue(Object obj) {
+        if(obj instanceof  AssociationObjectRDFNode) {
+            AssociationObjectRDFNode node = (AssociationObjectRDFNode) obj;
+            if(node.rdfType != rdfType) return false;
+            if(!node.data.toString().equals(data.toString())) return false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static boolean containsType(Set<AssociationObjectRDFNode> assSet, RDFNode nodeType) {
         Iterator<AssociationObjectRDFNode> it = assSet.iterator();
         if (nodeType==null) {
