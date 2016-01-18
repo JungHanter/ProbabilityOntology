@@ -20,12 +20,12 @@ public class ProbabilityOntTester {
     public static final String HCTX_ONT_NAMESPACE = "http://soft.ssu.ac.kr/ontology/health_context#";
 
     public static void main(String[] args) {
-        ProbabilityAnalyzer analyzer = new ProbabilityAnalyzer();
+        ProbabilityAnalyzer analyzer = new ProbabilityAnalyzer(0.25, 0.25);
 
         analyzer.addAlignmentSchemaOntology(HEALTH_CONTEXT_ONTOLOGY, HCTX_ONT_NAMESPACE, "hctx", "RDF/XML");
         analyzer.addAlignmentDataOntology(HEALTH_CONTEXT_ONTOLOGY, HCTX_ONT_NAMESPACE, "hctx", "RDF/XML");
 
-        analyzer.addAlignmentDataOntology(makeTestLearningDataset(analyzer.getAlignedSchemaOntModel(), 10),
+        analyzer.addAlignmentDataOntology(makeTestLearningDataset(analyzer.getAlignedSchemaOntModel(), 100),
                 HCTX_ONT_NAMESPACE, "hctx");
         analyzer.addAlignmentDataOntology(makeTestAnalysintInputDataset(analyzer.getAlignedSchemaOntModel(), 3),
                 HCTX_ONT_NAMESPACE, "hctx");

@@ -67,13 +67,19 @@ public class AssociaitonObjecTypeAndValue {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return data.getValue().hashCode();
+    }
+
     public static boolean equalsSet(Set<AssociaitonObjecTypeAndValue> set1,
                                     Set<AssociaitonObjecTypeAndValue> set2) {
         if (set1 == set2)
             return true;
         if (set1.size() != set2.size())
             return false;
-        return set1.containsAll(set2);
+//        return set1.containsAll(set2);
+        return containsAll(set1, set2);
     }
 
     public static Set<RDFNode> getTypeSet(Set<AssociaitonObjecTypeAndValue> typeValSet) {
@@ -100,24 +106,26 @@ public class AssociaitonObjecTypeAndValue {
     }
 
 
-    public static boolean contains(Set<AssociationObjectRDFNode> assSet, RDFNode nodeType) {
-        Iterator<AssociationObjectRDFNode> it = assSet.iterator();
-        if (nodeType==null) {
+
+    public static boolean contains(Set<AssociaitonObjecTypeAndValue> assSet,
+                                   AssociaitonObjecTypeAndValue ass) {
+        Iterator<AssociaitonObjecTypeAndValue> it = assSet.iterator();
+        if (ass==null) {
             while (it.hasNext())
                 if (it.next()==null)
                     return true;
         } else {
             while (it.hasNext())
-//                if (node.equals(it.next()))
-                if (it.next().eqaulsType(nodeType))
+                if (ass.equals(it.next()))
                     return true;
         }
         return false;
     }
 
-    public static boolean containsAll(Set<AssociationObjectRDFNode> assSet, Set<RDFNode> typeSet) {
-        for (RDFNode type : typeSet)
-            if(!contains(assSet, type))
+    public static boolean containsAll(Set<AssociaitonObjecTypeAndValue> set1,
+                                      Set<AssociaitonObjecTypeAndValue> set2) {
+        for (AssociaitonObjecTypeAndValue tv : set2)
+            if(!contains(set1, tv))
                 return false;
         return true;
     }

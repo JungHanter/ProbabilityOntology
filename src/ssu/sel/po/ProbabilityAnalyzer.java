@@ -174,7 +174,7 @@ public class ProbabilityAnalyzer {
                 for(AssociationAnalyzer analyzer : analyzerSet) {
                     RDFNode nowResultNode = analyzer.getTargetNode();
                     double nowProbability = analyzer.analyzeAssociationProbability(dataSet);
-                    //select highest probabiltity result node
+                    //select highest probability result node
                     if(resultNode == null) {
                         resultNode = nowResultNode;
                         probability = nowProbability;
@@ -188,7 +188,8 @@ public class ProbabilityAnalyzer {
 
                 if (resultNode != null && probability > minConfidence) {
                     Resource analysisSubject = subject.asResource();
-                    Resource resProbRel = resultModel.createResource(defaultNamespace + "instanceOfProbRel_" + System.currentTimeMillis()); //temporary URI
+                    Resource resProbRel = resultModel.createResource(defaultNamespace + "instanceOfProbRel_" + System.nanoTime()); //temporary URI
+//                    System.out.println(resProbRel.toString());
                     resultModel.add(resProbRel, RDF.type, resProbRelType);
                     resultModel.add(analysisSubject, propHasProbRel, resProbRel);
                     resultModel.add(resProbRel, propIsProbSubj, analysisSubject);

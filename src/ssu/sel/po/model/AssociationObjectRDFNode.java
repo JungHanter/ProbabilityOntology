@@ -70,6 +70,11 @@ public class AssociationObjectRDFNode {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return rdfNode.toString().hashCode();
+    }
+
     public boolean eqaulsType(Object obj) {
         if(obj instanceof AssociationObjectRDFNode) {
             AssociationObjectRDFNode associationObjectRdfNode = (AssociationObjectRDFNode) obj;
